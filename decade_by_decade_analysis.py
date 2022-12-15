@@ -68,6 +68,8 @@ plt.ylabel("Density")
 plt.savefig("Stacked_bar_plot")
 plt.show()
 
+#todo check stacked barplot
+
 # Generate distance matrix and then cluster
 dist_matrix_list = []
 for i in range(len(distribution_list)):
