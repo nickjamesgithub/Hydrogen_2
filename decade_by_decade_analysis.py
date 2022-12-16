@@ -51,24 +51,36 @@ for i in range(len(continent_unique)):
 # Generate barplot
 norm_distribution_list = []
 for i in range(len(distribution_list)):
-    norm_distribution = np.nan_to_num(distribution_list[i]/np.sum(distribution_list[i]))
-    print("check", np.sum(norm_distribution))
+    norm_distribution = np.nan_to_num(distribution_list[i]/np.sum(np.abs(distribution_list[i])))
     norm_distribution_list.append(norm_distribution)
 
 # Convert to dataframes and merge
-fig, ax=plt.subplots()
-for j in range(len(norm_distribution_list)):
-    ax.bar(names_list, norm_distribution_list[j])
-    ax.set_xticklabels([''] + names_list, fontsize=6, rotation=90)
-plt.legend(["Refining", "Ammonia", "Methanol", "Iron&Steel", "Other Ind", "Mobility",
-                            "Power", "Grid inj.", "CHP", "Domestic heat", "Biofuels", "Synfuels",
-                            "CH4 grid inj.", "CH4 mobility"])
-plt.xlabel("Region / use")
-plt.ylabel("Density")
+norm_distribution_array = np.array(norm_distribution_list).reshape(14,14)
+names_array = np.array(names_list).reshape(14,1)
+merged_array = np.concatenate((names_array, norm_distribution_array),axis=1) # Merge 2 arrays
+df = pd.DataFrame(merged_array, columns=["Geography", "Refining", "Ammonia", "Methanol", "Iron&Steel", "Other Ind", "Mobility",
+                             "Power", "Grid inj.", "CHP", "Domestic heat", "Biofuels", "Synfuels",
+                             "CH4 grid inj.", "CH4 mobility"])
+# Convert to float
+df["Refining"] = df["Refining"].astype(float)
+df["Ammonia"] = df["Ammonia"].astype(float)
+df["Methanol"] = df["Methanol"].astype(float)
+df["Iron&Steel"] = df["Iron&Steel"].astype(float)
+df["Other Ind"] = df["Other Ind"].astype(float)
+df["Mobility"] = df["Mobility"].astype(float)
+df["Power"] = df["Power"].astype(float)
+df["Grid inj."] = df["Grid inj."].astype(float)
+df["CHP"] = df["CHP"].astype(float)
+df["Domestic heat"] = df["Domestic heat"].astype(float)
+df["Biofuels"] = df["Biofuels"].astype(float)
+df["Synfuels"] = df["Synfuels"].astype(float)
+df["CH4 mobility"] = df["CH4 mobility"].astype(float)
+df["CH4 grid inj."] = df["CH4 grid inj."].astype(float)
+
+# Plot distribution of uses
+df.plot(x='Geography', kind='bar', stacked=True, title='Stacked Bar with dataframe', fontsize=6)
 plt.savefig("Stacked_bar_plot")
 plt.show()
-
-#todo check stacked barplot
 
 # Generate distance matrix and then cluster
 dist_matrix_list = []
