@@ -36,18 +36,18 @@ fossil_year_unique = fossil_slice["Year"].unique()
 # Green Capacity values
 green_capacity_list = []
 for i in range(len(green_year_unique)):
-    green_capacity_vals = green_slice.loc[green_slice["Year"]==green_year_unique[i]]["Capacity"].values
+    green_capacity_vals = np.nan_to_num(np.log(green_slice.loc[green_slice["Year"]==green_year_unique[i]]["Capacity"].values))
     green_capacity_list.append(green_capacity_vals)
 
 # Fossil Capacity values
 fossil_capacity_list = []
 for i in range(len(fossil_year_unique)):
-    fossil_capacity_vals = fossil_slice.loc[fossil_slice["Year"]==fossil_year_unique[i]]["Capacity"].values
+    fossil_capacity_vals = np.nan_to_num(np.log(fossil_slice.loc[fossil_slice["Year"]==fossil_year_unique[i]]["Capacity"].values))
     fossil_capacity_list.append(fossil_capacity_vals)
 
 # Compute distance between distributions and learn linear operator
-alpha_grid = np.linspace(-10,500,100) # 100
-beta_grid = np.linspace(-5,50,100) # 100
+alpha_grid = np.linspace(-20,20,100) # 100
+beta_grid = np.linspace(-5,5,100) # 100
 
 # Store Green optimal values for alpha & beta
 green_optimal_alpha_list = []
@@ -71,7 +71,7 @@ for j in range(0,len(green_capacity_list)-1):
             # Compute linear transformation
             alpha_ = alpha_grid[a]
             beta_ = beta_grid[b]
-            dist_transformed_capacity = alpha_ + beta_ * green_capacity_t
+            dist_transformed_capacity = np.nan_to_num(alpha_ + beta_ * green_capacity_t)
 
             # Compute wasserstein distance
             w_dist = wasserstein_distance(dist_transformed_capacity, green_capacity_t1)

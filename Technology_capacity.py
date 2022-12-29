@@ -22,6 +22,7 @@ features = ["Refining", "Ammonia", "Methanol", "Iron&Steel", "Other Ind",
 
 # Loop over the features
 feature_list = []
+feature_list_nu = []
 for i in range(len(features)):
 
     # Slice feature
@@ -35,30 +36,39 @@ for i in range(len(features)):
     feature_slice_normalized = (feature_slice_cumsum/total)
     feature_list.append(feature_slice_normalized)
 
-    # Plot CDF for each feature
-    plt.plot(year_slice, feature_slice_normalized)
-    plt.title(features[i])
-    plt.xlabel("Time")
-    plt.ylabel("Density")
-    plt.savefig("Normalized_CDF_"+features[i])
-    plt.show()
+    # # Plot CDF for each feature
+    # plt.plot(year_slice, feature_slice_normalized)
+    # plt.title(features[i])
+    # plt.xlabel("Time")
+    # plt.ylabel("Density")
+    # plt.savefig("Normalized_CDF_"+features[i])
+    # plt.show()
+
+    # Groupby year first
+    data_slice_grouped = data_slice.groupby(by="Year").sum()
+    data_slice_grouped_cumsum = np.cumsum(data_slice_grouped)
+    data_slice_total = np.sum(data_slice_grouped)
+    data_slice_normalized = (data_slice_grouped_cumsum/data_slice_total).values
+    feature_list_nu.append(data_slice_normalized)
+
 
 # Loop over features, normalize trajectories and compute distances
 distance_list = []
-for j in range(len(feature_list)):
-    for k in range(len(feature_list)):
+for j in range(len(feature_list_nu)):
+    for k in range(len(feature_list_nu)):
         # Slice CDFs
-        trajectory_j = feature_list[j]
-        trajectory_k = feature_list[k]
+        trajectory_j = feature_list_nu[j]
+        trajectory_k = feature_list_nu[k]
         # Compute distance between two CDFs
         dist = np.sum(np.abs(trajectory_j-trajectory_k))
         distance_list.append(dist)
 
 # Reshape
-distance_array = np.reshape(distance_list, (len(feature_list),len(feature_list)))
+distance_array = np.reshape(distance_list, (len(feature_list_nu),len(feature_list_nu)))
 
 # Plot distance between trajectories
 plt.matshow(distance_array)
+plt.colorbar()
 plt.savefig("Distance_matrix_CDFs")
 plt.show()
 

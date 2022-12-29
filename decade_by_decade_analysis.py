@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from Utilities import dendrogram_plot_test
 
 experiment = "Technology" # "Chemical", "Technology"
 
@@ -11,7 +12,7 @@ data = pd.read_csv("/Users/tassjames/Desktop/Hydrogen_cleaned_vf.csv")
 data["Capacity"] = data["Capacity"].fillna(0)
 data = data[data['Year'].notna()]
 data = data[data['Status'].notna()]
-data = data.loc[data["Year"] >= 2000]
+data = data.loc[(data["Year"] >= 2010) & (data["Year"] <= 2020)]
 
 # Sorted data with temporal ordering
 sorted_data = data.sort_values("Year")
@@ -103,5 +104,11 @@ ax.xaxis.set_major_locator(plt.MaxNLocator(17))
 ax.yaxis.set_major_locator(plt.MaxNLocator(17))
 ax.set_xticklabels(['']+names_list, fontsize=6, rotation=45)
 ax.set_yticklabels(['']+names_list, rotation=0, fontsize=6)
-plt.savefig("Distribution_distance_hydrogen")
+plt.savefig("Distribution_distance_hydrogen_2010_2020")
 plt.show()
+
+names_list_abbreviated = ["Africa F", "Africa G", "E.Asia F", "E.Asia G", "Europe F", "Europe G",
+                          "LATAM F", "LATAM G", "N.America F", "N.America G", "Oceania F", "Oceania G",
+                          "Other F", "Other G"]
+# # Plot dendrogram
+# dendrogram_plot_test(dist_matrix_reshaped, "_l1", "_distribution", names_list_abbreviated)
